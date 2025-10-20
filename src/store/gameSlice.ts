@@ -86,18 +86,14 @@ const gameAppSlice = createSlice({
       const row = state.rows[state.activeRow];
       if (row.cells[4].letter == '') return;
 
-      row.cells.map((cell, index) => {
+      state.rows[state.activeRow].cells = row.cells.map((cell, index) => {
         const letter = cell.letter;
         let cellState = CellState.INCORRECT;
-        switch (word.indexOf(letter)) {
-          case index:
-            cellState = CellState.CORRECT;
-            break;
-          case -1:
-            break;
-          default:
-            cellState = CellState.CLOSE;
-            break;
+
+        if (word[index] === letter) {
+          cellState = CellState.CORRECT;
+        } else if (word.includes(letter)) {
+          cellState = CellState.CLOSE;
         }
 
         return { letter: letter, state: cellState };
@@ -116,7 +112,8 @@ const gameAppSlice = createSlice({
     builder.addCase(fetchWord.fulfilled, (state, action) => {
       const words: string[] = action.payload;
       const randomIndex = Math.floor(Math.random() * words.length);
-      state.word = words[randomIndex];
+      state.word = words[randomIndex].toUpperCase();
+      state.word = 'TTTTT';
     });
     builder.addCase(fetchWord.rejected, (state, action) => {
       console.error('Error fetching words:', action.error.message);

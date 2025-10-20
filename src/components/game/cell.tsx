@@ -1,7 +1,7 @@
 import { CellState } from '../../store/gameSlice';
 import { useAppSelector } from '../../store/hooks';
 import './cell.less'
-import type { JSX } from "react"
+import { useCallback, type JSX } from "react"
 
 interface CellProps {
     col: number;
@@ -9,14 +9,16 @@ interface CellProps {
 }
 
 const Cell = ({ col, row }: CellProps): JSX.Element => {
-    const { rows } = useAppSelector(state => state.game);
+    const { rows, activeRow } = useAppSelector(state => state.game);
 
     const getCell = () => {
         return rows[row].cells[col];
     }
 
-    const getStateClassname = () => {
+    const getStateClassname = useCallback(() => {
         const { state } = getCell();
+        if (col == 0 && row == 0)
+            console.log('Cell state:', state);
 
         switch (state) {
             case CellState.UNUSED:
@@ -28,7 +30,7 @@ const Cell = ({ col, row }: CellProps): JSX.Element => {
             case CellState.CORRECT:
                 return 'correct'
         }
-    }
+    }, [activeRow]);
 
     return (
         <div className={`cell ${getStateClassname()}`}>{getCell().letter}</div>
