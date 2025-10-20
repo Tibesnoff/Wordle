@@ -113,7 +113,6 @@ const gameAppSlice = createSlice({
       const words: string[] = action.payload;
       const randomIndex = Math.floor(Math.random() * words.length);
       state.word = words[randomIndex].toUpperCase();
-      state.word = 'TTTTT';
     });
     builder.addCase(fetchWord.rejected, (state, action) => {
       console.error('Error fetching words:', action.error.message);
