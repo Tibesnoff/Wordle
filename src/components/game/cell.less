@@ -11,19 +11,30 @@
     line-height: 1;
     font-weight: 700;
 
+    @unused-color: #d3d6da;
+    @correct-color: green;
+    @close-color: #c9b458;
+    @incorrect-color: #787c7e;
+
     &.unused{
-        border-color: #d3d6da !important;
+        border-color: @unused-color !important;
     }
 
     &.correct{
-        border-color: green !important;
+        background-color: @correct-color !important;
+        border-color: @correct-color !important;
+        color: white;
     }
 
     &.close{
-        border-color: yellow !important;
+        background-color: @close-color !important;
+        border-color: @close-color !important;
+        color: white;
     }
 
     &.incorrect{
-        border-color: red !important;
+        background-color: @incorrect-color !important;
+        border-color: @incorrect-color !important;
+        color: white;
     }
 }
