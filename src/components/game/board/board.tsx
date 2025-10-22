@@ -1,7 +1,7 @@
 import './board.less';
 import { type JSX } from 'react';
 import Cell from './cell';
-import useGame from '../../hooks/useGame';
+import useGame from '../../../hooks/useGame';
 
 const Board = (): JSX.Element => {
   useGame();

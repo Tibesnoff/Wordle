@@ -1,5 +1,5 @@
-import { CellState } from '../../store/gameSlice';
-import { useAppSelector } from '../../store/hooks';
+import { CellState } from '../../../store/gameSlice';
+import { useAppSelector } from '../../../store/hooks';
 import './cell.less';
 import { type JSX } from 'react';
 

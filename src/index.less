@@ -1,4 +1,35 @@
+@unused-color: #d3d6da;
+@correct-color: green;
+@close-color: #c9b458;
+@incorrect-color: #787c7e;
+
 .layout {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    width: 100%;
+}
+
+.unused{
+    border-color: @unused-color !important;
+}
+
+.correct{
+    background-color: @correct-color !important;
+    border-color: @correct-color !important;
+    color: white;
+}
+
+.close{
+    background-color: @close-color !important;
+    border-color: @close-color !important;
+    color: white;
+}
+
+.incorrect{
+    background-color: @incorrect-color !important;
+    border-color: @incorrect-color !important;
+    color: white;
 }
