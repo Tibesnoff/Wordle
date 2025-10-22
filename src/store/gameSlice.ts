@@ -21,10 +21,12 @@ interface Row {
 
 interface GameState {
     word: string;
+    allWords: string[];
     usedLetters: LetterDictionary;
     rows: Row[];
     currentRowIndex: number;
     isCompleted: boolean;
+    message: string | null;
 }
 
 const createCell = (): Cell => ({ letter: '', state: CellState.UNUSED });
@@ -35,10 +37,12 @@ const createRow = (): Row => ({
 // initialState
 const initialState: GameState = {
     word: '',
+    allWords: [],
     usedLetters: {},
     rows: Array.from({ length: 6 }, () => createRow()),
     currentRowIndex: 0,
     isCompleted: false,
+    message: null,
 };
 
 export const fetchWord = createAsyncThunk('game/fetchWord', async () => {
@@ -86,7 +90,11 @@ const gameAppSlice = createSlice({
         submitRow: state => {
             if (state.isCompleted) return;
 
-            if (state.rows[state.currentRowIndex].cells.some(cell => cell.letter == '')) return;
+            if (state.rows[state.currentRowIndex].cells.some(cell => cell.letter == '')) {
+                state.message = 'Not enough letters';
+
+                return;
+            }
 
             state.rows[state.currentRowIndex].cells = state.rows[state.currentRowIndex].cells.map(
                 (cell, index) => {
@@ -107,11 +115,24 @@ const gameAppSlice = createSlice({
 
             if (state.currentRowIndex == 5 || won) {
                 // Do end of game things
-
+                if (won) state.message = 'You won!';
+                else state.message = 'You lost :(sd';
                 state.isCompleted = true;
             }
 
             state.currentRowIndex++;
+        },
+        clearMessage: state => {
+            state.message = null;
+        },
+        resetGame: state => {
+            const randomIndex = Math.floor(Math.random() * state.allWords.length);
+            state.word = state.allWords[randomIndex].toUpperCase();
+
+            state.usedLetters = {};
+            state.currentRowIndex = 0;
+            state.rows = Array.from({ length: 6 }, () => createRow());
+            state.isCompleted = false;
         },
     },
     extraReducers: builder => {
@@ -122,6 +143,7 @@ const gameAppSlice = createSlice({
             const words: string[] = action.payload;
             const randomIndex = Math.floor(Math.random() * words.length);
             state.word = words[randomIndex].toUpperCase();
+            state.allWords = words;
         });
         builder.addCase(fetchWord.rejected, (state, action) => {
             console.error('Error fetching words:', action.error.message);
@@ -130,6 +152,7 @@ const gameAppSlice = createSlice({
 });
 
 // Export actions
-export const { setNextLetter, submitRow, deleteLetter } = gameAppSlice.actions;
+export const { setNextLetter, submitRow, deleteLetter, clearMessage, resetGame } =
+    gameAppSlice.actions;
 
 export default gameAppSlice.reducer;

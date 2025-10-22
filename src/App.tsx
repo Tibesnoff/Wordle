@@ -4,6 +4,7 @@ import './index.less';
 import { fetchWord } from './store/gameSlice';
 import { useAppDispatch } from './store/hooks';
 import Keyboard from './components/game/keyboard/keyboard';
+import Message from './components/game/message/message';
 
 const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -13,6 +14,7 @@ const App = (): JSX.Element => {
     <div className="layout">
       <Board />
       <Keyboard />
+      <Message />
     </div>
   );
 };
