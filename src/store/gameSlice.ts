@@ -20,22 +20,20 @@ interface Row {
 interface GameState {
   word: string;
   rows: Row[];
-  activeRow: number; // 0 indexed
-  activeColumn: number; // 0 indexed
+  currentRowIndex: number;
   isCompleted: boolean;
 }
 
-const baseCell: Cell = { letter: '', state: CellState.UNUSED };
-const baseRow: Row = {
-  cells: [baseCell, baseCell, baseCell, baseCell, baseCell],
-};
+const createCell = (): Cell => ({ letter: '', state: CellState.UNUSED });
+const createRow = (): Row => ({
+  cells: [createCell(), createCell(), createCell(), createCell(), createCell()],
+});
 
 // initialState
 const initialState: GameState = {
   word: '',
-  rows: [baseRow, baseRow, baseRow, baseRow, baseRow, baseRow],
-  activeRow: 0,
-  activeColumn: 0,
+  rows: Array.from({ length: 6 }, () => createRow()),
+  currentRowIndex: 0,
   isCompleted: false,
 };
 
@@ -65,44 +63,41 @@ const gameAppSlice = createSlice({
       if (state.isCompleted) return;
 
       const letter = action.payload;
-      if (state.activeColumn < 5) {
-        state.rows[state.activeRow].cells[state.activeColumn].letter = letter;
-        state.activeColumn++;
-      }
+
+      const currentRow = state.rows[state.currentRowIndex];
+      const emptyCellIndex = currentRow.cells.findIndex(cell => cell.letter === '');
+      if (emptyCellIndex >= 0)
+        state.rows[state.currentRowIndex].cells[emptyCellIndex].letter = letter;
     },
     deleteLetter: state => {
       if (state.isCompleted) return;
 
-      if (state.activeColumn > 0) {
-        const lastCol = state.activeColumn - 1;
-        state.rows[state.activeRow].cells[lastCol].letter = '';
-        state.activeColumn = lastCol;
-      }
+      const currentRow = state.rows[state.currentRowIndex];
+      const lastCellIndex = currentRow.cells.findLastIndex(cell => /^[a-zA-Z]$/.test(cell.letter));
+      if (lastCellIndex >= 0) state.rows[state.currentRowIndex].cells[lastCellIndex].letter = '';
     },
     submitRow: state => {
       if (state.isCompleted) return;
 
-      const word = state.word;
-      const row = state.rows[state.activeRow];
-      if (row.cells[4].letter == '') return;
+      if (state.rows[state.currentRowIndex].cells.some(cell => cell.letter == '')) return;
 
-      state.rows[state.activeRow].cells = row.cells.map((cell, index) => {
-        const letter = cell.letter;
-        let cellState = CellState.INCORRECT;
+      state.rows[state.currentRowIndex].cells = state.rows[state.currentRowIndex].cells.map(
+        (cell, index) => {
+          const newState = { letter: cell.letter, state: CellState.INCORRECT };
+          if (state.word[index] == cell.letter) newState.state = CellState.CORRECT;
+          else if (state.word.includes(cell.letter)) newState.state = CellState.CLOSE;
 
-        if (word[index] === letter) {
-          cellState = CellState.CORRECT;
-        } else if (word.includes(letter)) {
-          cellState = CellState.CLOSE;
-        }
+          return newState;
+        },
+      );
 
-        return { letter: letter, state: cellState };
-      });
+      if (state.currentRowIndex == 5) {
+        // Do end of game things
 
-      if (state.activeRow == 5) state.isCompleted = true;
-      if (state.activeRow < 5) state.activeRow++;
+        state.isCompleted = true;
+      }
 
-      state.activeColumn = 0;
+      state.currentRowIndex++;
     },
   },
   extraReducers: builder => {

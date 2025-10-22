@@ -1,8 +1,8 @@
-import type { JSX } from "react"
-import Board from "./components/game/board"
-import './index.less'
-import { fetchWord } from "./store/gameSlice"
-import { useAppDispatch } from "./store/hooks"
+import type { JSX } from 'react';
+import Board from './components/game/board';
+import './index.less';
+import { fetchWord } from './store/gameSlice';
+import { useAppDispatch } from './store/hooks';
 
 const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -12,7 +12,7 @@ const App = (): JSX.Element => {
     <div className="layout">
       <Board />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

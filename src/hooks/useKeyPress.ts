@@ -1,22 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch } from '../store/hooks';
-import { deleteLetter, setNextLetter, submitRow } from '../store/gameSlice';
 
-const useKeyPress = () => {
-  const [key, setKey] = useState<string | null>(null);
+const useKeyPress = (onKeyPress: (key: string) => void) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (/^[a-zA-Z]$/.test(event.key)) {
-        const letter = event.key.toUpperCase();
-        setKey(letter);
-        dispatch(setNextLetter(letter));
-      } else if (event.key == 'Backspace') {
-        dispatch(deleteLetter());
-      } else if (event.key === 'Enter') {
-        dispatch(submitRow());
-      }
+      onKeyPress(event.key);
     };
 
     globalThis.addEventListener('keydown', handleKeyDown);
@@ -26,7 +16,7 @@ const useKeyPress = () => {
     };
   }, [dispatch]);
 
-  return { key };
+  return {};
 };
 
 export default useKeyPress;
