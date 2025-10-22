@@ -85,13 +85,18 @@ const gameAppSlice = createSlice({
         (cell, index) => {
           const newState = { letter: cell.letter, state: CellState.INCORRECT };
           if (state.word[index] == cell.letter) newState.state = CellState.CORRECT;
-          else if (state.word.includes(cell.letter)) newState.state = CellState.CLOSE;
+          else if (state.word.includes(cell.letter) && state.word[index] != cell.letter)
+            newState.state = CellState.CLOSE;
 
           return newState;
         },
       );
 
-      if (state.currentRowIndex == 5) {
+      const won = state.rows[state.currentRowIndex].cells.every(
+        cell => cell.state == CellState.CORRECT,
+      );
+
+      if (state.currentRowIndex == 5 || won) {
         // Do end of game things
 
         state.isCompleted = true;
